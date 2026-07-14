@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 
-	"lec.ufscar.br/oligominer-rewrite/bio"
+	"lec.ufscar.br/OliGO/bio"
 )
 
 func main() {
