@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"lec.ufscar.br/OliGO/bio"
 )
@@ -47,29 +48,11 @@ func main() {
 	writer := bufio.NewWriter(outFile)
 	defer writer.Flush()
 
-	if uniqueOnly {
-		counts := make(map[string]int)
-
-		for {
-			rec, err := reader.Next()
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			if err != nil {
-				log.Fatalf("counting pass: %v", err)
-			}
-			counts[rec.QName]++
-		}
-
-		if _, err := file.Seek(0, io.SeekStart); err != nil {
-			log.Fatal(err)
-		}
-
-		reader, err = bio.NewSAMReader(file)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	hits := make(map[string]*struct {
+		seq []byte
+		pos []string
+	})
+	var order []string
 
 	for {
 		rec, err := reader.Next()
@@ -80,13 +63,61 @@ func main() {
 			break
 		}
 		if err != nil {
-			log.Fatalf("reading first sequence: %v", err)
+			log.Fatalf("reading sequence: %v", err)
 		}
 
 		if rec.Flag != 0 || rec.MAPQ < uint8(minMAPQ) {
 			continue
 		}
 
-		fmt.Fprintf(writer, ">%s\n%s\n", rec.QName, string(rec.Seq))
+		id := rec.QName
+		if i := strings.IndexByte(id, '|'); i != -1 {
+			id = id[:i]
+		}
+
+		refSpan := 0
+		numBuf := 0
+		hasNum := false
+		for _, c := range rec.Cigar {
+			if c >= '0' && c <= '9' {
+				numBuf = numBuf*10 + int(c-'0')
+				hasNum = true
+				continue
+			}
+			if hasNum {
+				switch c {
+				case 'M', 'D', 'N', '=', 'X':
+					refSpan += numBuf
+				}
+			}
+			numBuf = 0
+			hasNum = false
+		}
+		if refSpan == 0 {
+			refSpan = len(rec.Seq)
+		}
+
+		startPos := rec.Pos
+		endPos := rec.Pos + refSpan - 1
+		posStr := fmt.Sprintf("%s:%d-%d", rec.RName, startPos, endPos)
+
+		h, ok := hits[id]
+		if !ok {
+			h = &struct {
+				seq []byte
+				pos []string
+			}{seq: rec.Seq}
+			hits[id] = h
+			order = append(order, id)
+		}
+		h.pos = append(h.pos, posStr)
+	}
+
+	for _, id := range order {
+		h := hits[id]
+		if uniqueOnly && len(h.pos) != 1 {
+			continue
+		}
+		fmt.Fprintf(writer, ">%s|%s\n%s\n", id, strings.Join(h.pos, ";"), string(h.seq))
 	}
 }
