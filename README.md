@@ -24,7 +24,7 @@ Start by building a Bowtie index of your genomic file using `bowtie2-build`:
 
 Then align the generated probes to the genomic file:
 
-	bowtie2 -x example_index -U example_probes.fasta -S aligned_probes.sam
+	bowtie2 -x example_index -f example_probes.fasta -S aligned_probes.sam
 
 **Attention!** It's important that the output is formatted as a SAM file or else it won't be possible to run the filter.
 
