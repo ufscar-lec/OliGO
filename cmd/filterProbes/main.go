@@ -26,6 +26,15 @@ func main() {
 	var outPath string
 	flag.StringVar(&outPath, "out", "filtered_probes.fasta", "Output FASTA file path; Default is \"filtered_probes.fasta\".")
 
+	var singleChr string
+	flag.StringVar(&singleChr, "singleChr", "", "If provided, remove the probes that are not mapped to said chromosome.")
+
+	var minStartPos int
+	flag.IntVar(&minStartPos, "minStartPos", -1, "If provided, remove the probes that start before said position (exclusively).")
+
+	var maxEndPos int
+	flag.IntVar(&maxEndPos, "maxEndPos", -1, "If provided, remove the probes that end after said position (exclusively).")
+
 	flag.Parse()
 
 	file, err := os.Open(targetFile)
@@ -100,6 +109,18 @@ func main() {
 		startPos := rec.Pos
 		endPos := rec.Pos + refSpan - 1
 		posStr := fmt.Sprintf("%s:%d-%d", rec.RName, startPos, endPos)
+
+		if singleChr != "" && rec.RName != singleChr {
+			continue
+		}
+
+		if minStartPos != -1 && startPos < minStartPos {
+			continue
+		}
+
+		if maxEndPos != -1 && endPos > maxEndPos {
+			continue
+		}
 
 		h, ok := hits[id]
 		if !ok {
