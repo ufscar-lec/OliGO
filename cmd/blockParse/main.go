@@ -22,6 +22,9 @@ func main() {
 	var stepSize int
 	flag.IntVar(&stepSize, "step", 1, "Step size for probe generation (bp); Default is 1.")
 
+	var removeMasked bool
+	flag.BoolVar(&removeMasked, "removeMasked", false, "Removes probes generated within masked regions.")
+
 	var minProbeGC float64
 	flag.Float64Var(&minProbeGC, "minGC", 20, "Minimum GC content per probe (%); Default is 20.")
 	var maxProbeGC float64
@@ -77,7 +80,7 @@ func main() {
 			log.Fatalf("reading first sequence: %v", err)
 		}
 
-		probes, err := bio.GetProbeCandidates(*rec, probeLen, stepSize, minProbeGC, maxProbeGC, maxRepeat, strandConc, naConc, minProbeTm, maxProbeTm)
+		probes, err := bio.GetProbeCandidates(*rec, probeLen, stepSize, removeMasked, minProbeGC, maxProbeGC, maxRepeat, strandConc, naConc, minProbeTm, maxProbeTm)
 		if err != nil {
 			log.Fatal(err)
 		}

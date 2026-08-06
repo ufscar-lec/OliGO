@@ -88,7 +88,7 @@ func (reader *FASTAReader) Next() (*FASTARecord, error) {
 	return &FASTARecord{Header: hed, Sequence: seq}, nil
 }
 
-func GetProbeCandidates(rec FASTARecord, length int, step int, minGC float64, maxGC float64, maxRepeat int, strandConc float64, naConc float64, minProbeTm float64, maxProbeTm float64) ([]FASTARecord, error) {
+func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool, minGC float64, maxGC float64, maxRepeat int, strandConc float64, naConc float64, minProbeTm float64, maxProbeTm float64) ([]FASTARecord, error) {
 	var recordList []FASTARecord
 	var saltCorr = 16.6 * math.Log10(naConc)
 
@@ -137,7 +137,10 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, minGC float64, ma
 		}
 
 		isValid := bytes.IndexFunc(probe.Sequence, func(r rune) bool {
-			return r != 'A' && r != 'C' && r != 'T' && r != 'G'
+			if removeMasked {
+				return r != 'A' && r != 'C' && r != 'T' && r != 'G'
+			}
+			return r != 'A' && r != 'C' && r != 'T' && r != 'G' && r != 'a' && r != 'c' && r != 't' && r != 'g'
 		}) == -1
 
 		if !isValid {
