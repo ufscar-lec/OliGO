@@ -17,6 +17,8 @@ echo "$TARGETS" | while read GOOS GOARCH; do
     [ -n "$GOOS" ] || continue
 
     OUTDIR="build/${GOOS}-${GOARCH}"
+    ZIPFILE="build/${GOOS}-${GOARCH}.zip"
+
     mkdir -p "$OUTDIR"
 
     EXT=""
@@ -29,4 +31,12 @@ echo "$TARGETS" | while read GOOS GOARCH; do
         GOOS="$GOOS" GOARCH="$GOARCH" \
             go build -o "$OUTDIR/$BIN$EXT" "./cmd/$BIN"
     done
+
+    echo "Creating $ZIPFILE..."
+    (
+        cd build
+        zip -r "${GOOS}-${GOARCH}.zip" "${GOOS}-${GOARCH}"
+    )
+
+    rm -rf "$OUTDIR"
 done
