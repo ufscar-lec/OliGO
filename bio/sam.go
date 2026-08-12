@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const maxSAMLineSize = 256 * 1024 * 1024 // long-read SEQ/CIGAR/QUAL can be huge
+const maxSAMLineSize = 256 * 1024 * 1024
 
 var SAMErrEmptyInput = errors.New("sam: empty input")
 
@@ -27,6 +27,8 @@ type SAMRecord struct {
 	Seq   []byte
 	Qual  []byte
 	Tags  []byte
+	AS    int
+	HasAS bool
 }
 
 type SAMReader struct {
@@ -143,6 +145,16 @@ func (reader *SAMReader) parseRecord(line []byte) (*SAMRecord, error) {
 
 	if len(fields) == 12 {
 		rec.Tags = append([]byte(nil), fields[11]...)
+		for tag := range bytes.SplitSeq(fields[11], []byte("\t")) {
+			if bytes.HasPrefix(tag, []byte("AS:i:")) {
+				val, convErr := strconv.Atoi(string(tag[len("AS:i:"):]))
+				if convErr == nil {
+					rec.AS = val
+					rec.HasAS = true
+				}
+				break
+			}
+		}
 	}
 
 	return rec, nil
