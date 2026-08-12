@@ -27,8 +27,6 @@ type SAMRecord struct {
 	Seq   []byte
 	Qual  []byte
 	Tags  []byte
-	AS    int
-	HasAS bool
 }
 
 type SAMReader struct {
@@ -145,16 +143,6 @@ func (reader *SAMReader) parseRecord(line []byte) (*SAMRecord, error) {
 
 	if len(fields) == 12 {
 		rec.Tags = append([]byte(nil), fields[11]...)
-		for tag := range bytes.SplitSeq(fields[11], []byte("\t")) {
-			if bytes.HasPrefix(tag, []byte("AS:i:")) {
-				val, convErr := strconv.Atoi(string(tag[len("AS:i:"):]))
-				if convErr == nil {
-					rec.AS = val
-					rec.HasAS = true
-				}
-				break
-			}
-		}
 	}
 
 	return rec, nil

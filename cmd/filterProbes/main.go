@@ -17,9 +17,6 @@ func main() {
 	var targetFile string
 	flag.StringVar(&targetFile, "target", "", "Target SAM for probe filtering.")
 
-	var minAS int
-	flag.IntVar(&minAS, "minAS", -1, "If provided, remove alignments with AS:i below this score.")
-
 	var uniqueOnly bool
 	flag.BoolVar(&uniqueOnly, "unique", false, "Removes non-unique probes.")
 
@@ -57,14 +54,9 @@ func main() {
 	writer := bufio.NewWriter(outFile)
 	defer writer.Flush()
 
-	type posHit struct {
-		pos string
-		as  int
-	}
-
 	hits := make(map[string]*struct {
 		seq []byte
-		pos []posHit
+		pos []string
 	})
 	var order []string
 
@@ -131,12 +123,12 @@ func main() {
 		if !ok {
 			h = &struct {
 				seq []byte
-				pos []posHit
+				pos []string
 			}{seq: rec.Seq}
 			hits[id] = h
 			order = append(order, id)
 		}
-		h.pos = append(h.pos, posHit{pos: posStr, as: rec.AS})
+		h.pos = append(h.pos, posStr)
 	}
 
 	for _, id := range order {
@@ -146,16 +138,6 @@ func main() {
 			continue
 		}
 
-		var kept []string
-		for _, p := range h.pos {
-			if minAS == -1 || p.as >= minAS {
-				kept = append(kept, p.pos)
-			}
-		}
-		if len(kept) == 0 {
-			continue
-		}
-
-		fmt.Fprintf(writer, ">%s|%s\n%s\n", id, strings.Join(kept, ";"), string(h.seq))
+		fmt.Fprintf(writer, ">%s|%s\n%s\n", id, strings.Join(h.pos, ";"), string(h.seq))
 	}
 }

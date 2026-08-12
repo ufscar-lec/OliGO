@@ -16,7 +16,7 @@ For further help on what is configurable, use the following command:
 
 ### 2- Aligning Candidates to a Target Genome
 
-For this step, you can use the aligner of your choice (as long as the output is a `.sam` file). For this example, we will be showing how to do it with [Bowtie2](https://github.com/BenLangmead/bowtie2).
+For this step, we will use [Bowtie2](https://github.com/BenLangmead/bowtie2) to align the probes to the target genome, retaining those that match sufficiently well.
 
 Start by building a Bowtie index of your genomic file using `bowtie2-build`:
 
@@ -24,9 +24,7 @@ Start by building a Bowtie index of your genomic file using `bowtie2-build`:
 
 Then align the generated probes to the genomic file:
 
-	bowtie2 -x example_index -a -f example_probes.fasta -S aligned_probes.sam
-
-**Attention!** It's important that the output is formatted as a SAM file or else it won't be possible to run the filter.
+	bowtie2 -x example_index -k 2 -f -U example_probes.fasta --score-min L,0,-1.5 -S aligned_probes.sam
 
 ### 3- Filtering Aligned Probes
 
