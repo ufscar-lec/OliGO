@@ -133,7 +133,7 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 	for index := 0; index <= len(rec.Sequence)-length; index += step {
 		probe := FASTARecord{
 			Header:   "candidate_" + strconv.Itoa(index),
-			Sequence: rec.Sequence[index : index+length],
+			Sequence: bytes.ToUpper(rec.Sequence[index : index+length]),
 		}
 
 		isValid := bytes.IndexFunc(probe.Sequence, func(r rune) bool {
@@ -181,6 +181,8 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 
 		deltaH := 0.0
 		deltaS := 0.0
+
+		seq := bytes.ToUpper(probe.Sequence)
 
 		for i := 0; i < len(probe.Sequence)-1; i++ {
 			key := [2]byte{probe.Sequence[i], probe.Sequence[i+1]}

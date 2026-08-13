@@ -82,7 +82,7 @@ func main() {
 			log.Fatalf("reading first sequence: %v", err)
 		}
 
-		probes, err := bio.GetProbeCandidates(*rec, probeLen, stepSize, removeMasked, minProbeGC, maxProbeGC, maxRepeat, strandConc, naConc, minProbeTm, maxProbeTm)
+		probes, err := bio.GetProbeCandidates(*rec, probeLen, stepSize, removeMasked, minProbeGC, maxProbeGC, maxRepeat, strandConc, naConc, formamidePerc, minProbeTm, maxProbeTm)
 		if err != nil {
 			log.Fatal(err)
 		}
