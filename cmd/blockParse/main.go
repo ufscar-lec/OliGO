@@ -37,6 +37,8 @@ func main() {
 	flag.Float64Var(&strandConc, "st", 25e-9, "Concentration of the strand (mol/L); Default is 25e-9.")
 	var naConc float64
 	flag.Float64Var(&naConc, "na", 0.39, "Concentration of Na+ (mol/L); Default is 0.39.")
+	var formamidePerc float64
+	flag.Float64Var(&formamidePerc, "form", 0, "Concentration of formamide (%); Default is 0.")
 
 	var minProbeTm float64
 	flag.Float64Var(&minProbeTm, "minTm", 350, "Minimum melting temperature per probe (K); Default is 350.")

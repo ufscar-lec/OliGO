@@ -88,7 +88,7 @@ func (reader *FASTAReader) Next() (*FASTARecord, error) {
 	return &FASTARecord{Header: hed, Sequence: seq}, nil
 }
 
-func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool, minGC float64, maxGC float64, maxRepeat int, strandConc float64, naConc float64, minProbeTm float64, maxProbeTm float64) ([]FASTARecord, error) {
+func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool, minGC float64, maxGC float64, maxRepeat int, strandConc float64, naConc float64, formamidePerc float64, minProbeTm float64, maxProbeTm float64) ([]FASTARecord, error) {
 	var recordList []FASTARecord
 	var saltCorr = 16.6 * math.Log10(naConc)
 
@@ -204,7 +204,8 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 			deltaS += -2.8
 		}
 
-		probeTm := ((deltaH * 1000) / (deltaS + 1.987*math.Log(strandConc/4))) + saltCorr
+		probeTm := (deltaH*1000)/(deltaS+1.987*math.Log(strandConc/4)) +
+			saltCorr - 0.65*formamidePerc
 
 		if probeTm > maxProbeTm || probeTm < minProbeTm {
 			continue
