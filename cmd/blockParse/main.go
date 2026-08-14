@@ -38,12 +38,12 @@ func main() {
 	var naConc float64
 	flag.Float64Var(&naConc, "na", 0.39, "Concentration of Na+ (mol/L); Default is 0.39.")
 	var formamidePerc float64
-	flag.Float64Var(&formamidePerc, "form", 0, "Concentration of formamide (%); Default is 0.")
+	flag.Float64Var(&formamidePerc, "form", 70, "Concentration of formamide (%); Default is 70.")
 
 	var minProbeTm float64
-	flag.Float64Var(&minProbeTm, "minTm", 350, "Minimum melting temperature per probe (K); Default is 350.")
+	flag.Float64Var(&minProbeTm, "minTm", 306, "Minimum melting temperature per probe (K); Default is 306.")
 	var maxProbeTm float64
-	flag.Float64Var(&maxProbeTm, "maxTm", 354, "Maximum melting temperature per probe (K); Default is 354.")
+	flag.Float64Var(&maxProbeTm, "maxTm", 316, "Maximum melting temperature per probe (K); Default is 316.")
 
 	var outPath string
 	flag.StringVar(&outPath, "out", "probes.fasta", "Output FASTA file path; Default is \"probes.fasta\".")
