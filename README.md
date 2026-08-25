@@ -1,5 +1,9 @@
 # OliGO
 
+<p align="center">
+  <img src="logo.svg" alt="" width="300">
+</p>
+
 ## Usage Guide
 
 ### 1- Generating Candidate Probes
