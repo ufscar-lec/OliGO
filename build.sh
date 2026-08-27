@@ -2,8 +2,6 @@
 
 set -eu
 
-BINARIES="blockParse filterProbes"
-
 TARGETS="
 linux amd64
 linux arm64
@@ -26,11 +24,9 @@ echo "$TARGETS" | while read GOOS GOARCH; do
         EXT=".exe"
     fi
 
-    for BIN in $BINARIES; do
-        echo "Building $BIN for $GOOS/$GOARCH..."
-        GOOS="$GOOS" GOARCH="$GOARCH" \
-            go build -o "$OUTDIR/$BIN$EXT" "./cmd/$BIN"
-    done
+    echo "Building OliGO for $GOOS/$GOARCH..."
+    GOOS="$GOOS" GOARCH="$GOARCH" \
+        go build -o "$OUTDIR/OliGO$EXT" "./cmd/OliGO"
 
     echo "Creating $ZIPFILE..."
     (

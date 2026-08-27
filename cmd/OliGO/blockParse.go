@@ -12,43 +12,45 @@ import (
 	"lec.ufscar.br/OliGO/bio"
 )
 
-func main() {
+func runBlockParse(args []string) {
+	fs := flag.NewFlagSet("blockParse", flag.ExitOnError)
+
 	var targetFile string
-	flag.StringVar(&targetFile, "target", "", "Target FASTA for probe generation.")
+	fs.StringVar(&targetFile, "target", "", "Target FASTA for probe generation.")
 
 	var probeLen int
-	flag.IntVar(&probeLen, "len", 40, "Desired probe length (bp); Default is 40.")
+	fs.IntVar(&probeLen, "len", 40, "Desired probe length (bp); Default is 40.")
 
 	var stepSize int
-	flag.IntVar(&stepSize, "step", 1, "Step size for probe generation (bp); Default is 1.")
+	fs.IntVar(&stepSize, "step", 1, "Step size for probe generation (bp); Default is 1.")
 
 	var removeMasked bool
-	flag.BoolVar(&removeMasked, "removeMasked", false, "Removes probes generated within masked regions.")
+	fs.BoolVar(&removeMasked, "removeMasked", false, "Removes probes generated within masked regions.")
 
 	var minProbeGC float64
-	flag.Float64Var(&minProbeGC, "minGC", 20, "Minimum GC content per probe (%); Default is 20.")
+	fs.Float64Var(&minProbeGC, "minGC", 20, "Minimum GC content per probe (%); Default is 20.")
 	var maxProbeGC float64
-	flag.Float64Var(&maxProbeGC, "maxGC", 80, "Maximum GC content per probe (%); Default is 80.")
+	fs.Float64Var(&maxProbeGC, "maxGC", 80, "Maximum GC content per probe (%); Default is 80.")
 
 	var maxRepeat int
-	flag.IntVar(&maxRepeat, "maxRepeat", 4, "Maximum amount of repeated bases (bp); Default is 4.")
+	fs.IntVar(&maxRepeat, "maxRepeat", 4, "Maximum amount of repeated bases (bp); Default is 4.")
 
 	var strandConc float64
-	flag.Float64Var(&strandConc, "st", 25e-9, "Concentration of the strand (mol/L); Default is 25e-9.")
+	fs.Float64Var(&strandConc, "st", 25e-9, "Concentration of the strand (mol/L); Default is 25e-9.")
 	var naConc float64
-	flag.Float64Var(&naConc, "na", 0.39, "Concentration of Na+ (mol/L); Default is 0.39.")
+	fs.Float64Var(&naConc, "na", 0.39, "Concentration of Na+ (mol/L); Default is 0.39.")
 	var formamidePerc float64
-	flag.Float64Var(&formamidePerc, "form", 70, "Concentration of formamide (%); Default is 70.")
+	fs.Float64Var(&formamidePerc, "form", 70, "Concentration of formamide (%); Default is 70.")
 
 	var minProbeTm float64
-	flag.Float64Var(&minProbeTm, "minTm", 306, "Minimum melting temperature per probe (K); Default is 306.")
+	fs.Float64Var(&minProbeTm, "minTm", 306, "Minimum melting temperature per probe (K); Default is 306.")
 	var maxProbeTm float64
-	flag.Float64Var(&maxProbeTm, "maxTm", 316, "Maximum melting temperature per probe (K); Default is 316.")
+	fs.Float64Var(&maxProbeTm, "maxTm", 316, "Maximum melting temperature per probe (K); Default is 316.")
 
 	var outPath string
-	flag.StringVar(&outPath, "out", "probes.fasta", "Output FASTA file path; Default is \"probes.fasta\".")
+	fs.StringVar(&outPath, "out", "probes.fasta", `Output FASTA file path; Default is "probes.fasta".`)
 
-	flag.Parse()
+	fs.Parse(args)
 
 	file, err := os.Open(targetFile)
 	if err != nil {
