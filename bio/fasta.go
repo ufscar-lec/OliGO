@@ -98,9 +98,13 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 		{'A', 'T'}: -7.2,
 		{'T', 'A'}: -7.2,
 		{'C', 'A'}: -8.5,
+		{'T', 'G'}: -8.5, // revcomp of CA
 		{'G', 'T'}: -8.4,
+		{'A', 'C'}: -8.4, // revcomp of GT
 		{'C', 'T'}: -7.8,
+		{'A', 'G'}: -7.8, // revcomp of CT
 		{'G', 'A'}: -8.2,
+		{'T', 'C'}: -8.2, // revcomp of GA
 		{'C', 'G'}: -10.6,
 		{'G', 'C'}: -9.8,
 		{'G', 'G'}: -8.0,
@@ -113,9 +117,13 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 		{'A', 'T'}: -20.4,
 		{'T', 'A'}: -21.3,
 		{'C', 'A'}: -22.8,
+		{'T', 'G'}: -22.8, // revcomp of CA
 		{'G', 'T'}: -22.4,
+		{'A', 'C'}: -22.4, // revcomp of GT
 		{'C', 'T'}: -21.0,
+		{'A', 'G'}: -21.0, // revcomp of CT
 		{'G', 'A'}: -22.2,
+		{'T', 'C'}: -22.2, // revcomp of GA
 		{'C', 'G'}: -27.2,
 		{'G', 'C'}: -24.4,
 		{'G', 'G'}: -19.9,
@@ -186,8 +194,18 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 
 		for i := 0; i < len(probe.Sequence)-1; i++ {
 			key := [2]byte{probe.Sequence[i], probe.Sequence[i+1]}
-			deltaH += deltaHTable[key]
-			deltaS += deltaSTable[key]
+
+			hVal, hOk := deltaHTable[key]
+			if !hOk {
+				return nil, fmt.Errorf("no deltaH NN parameter for dinucleotide %s", string(key[:]))
+			}
+			deltaH += hVal
+
+			sVal, sOk := deltaSTable[key]
+			if !sOk {
+				return nil, fmt.Errorf("no deltaS NN parameter for dinucleotide %s", string(key[:]))
+			}
+			deltaS += sVal
 		}
 
 		if probe.Sequence[0] == 'A' || probe.Sequence[0] == 'T' {
