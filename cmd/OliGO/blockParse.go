@@ -19,10 +19,10 @@ func runBlockParse(args []string) {
 	fs.StringVar(&targetFile, "target", "", "Target FASTA for probe generation.")
 
 	var probeLen int
-	fs.IntVar(&probeLen, "len", 40, "Desired probe length (bp); Default is 40.")
+	fs.IntVar(&probeLen, "len", 40, "Desired probe length (nt); Default is 40.")
 
 	var stepSize int
-	fs.IntVar(&stepSize, "step", 1, "Step size for probe generation (bp); Default is 1.")
+	fs.IntVar(&stepSize, "step", 1, "Step size for probe generation (nt); Default is 1.")
 
 	var removeMasked bool
 	fs.BoolVar(&removeMasked, "removeMasked", false, "Removes probes generated within masked regions.")
@@ -33,7 +33,7 @@ func runBlockParse(args []string) {
 	fs.Float64Var(&maxProbeGC, "maxGC", 80, "Maximum GC content per probe (%); Default is 80.")
 
 	var maxRepeat int
-	fs.IntVar(&maxRepeat, "maxRepeat", 4, "Maximum amount of repeated bases (bp); Default is 4.")
+	fs.IntVar(&maxRepeat, "maxRepeat", 4, "Maximum amount of repeated bases (nt); Default is 4.")
 
 	var strandConc float64
 	fs.Float64Var(&strandConc, "st", 25e-9, "Concentration of the strand (mol/L); Default is 25e-9.")
