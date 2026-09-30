@@ -41,5 +41,3 @@ Example using our hypothetical `aligned_probes.sam`, removing non-unique probes:
 For further help on what is configurable, use the following command:
 
 	OliGO filterProbes -h
-
-**Attention!** `filterProbes` will automatically filter out probes that have low MAPQ score. If you don't want this behaviour, use the flag `-minMAPQ 0`.
