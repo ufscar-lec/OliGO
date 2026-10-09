@@ -160,7 +160,7 @@ func GetProbeCandidates(rec FASTARecord, length int, step int, removeMasked bool
 		countGC := 0
 
 		for i, base := range probe.Sequence {
-			if base == 'G' || base == 'C' {
+			if base == 'G' || base == 'C' || base == 'g' || base == 'c' {
 				countGC++
 			}
 

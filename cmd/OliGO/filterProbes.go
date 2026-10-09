@@ -62,6 +62,8 @@ func runFilterProbes(args []string) {
 	})
 	var order []string
 
+	totalHits := make(map[string]int)
+
 	for {
 		rec, err := reader.Next()
 		if errors.Is(err, bio.SAMErrEmptyInput) {
@@ -82,6 +84,8 @@ func runFilterProbes(args []string) {
 		if i := strings.IndexByte(id, '|'); i != -1 {
 			id = id[:i]
 		}
+
+		totalHits[id]++
 
 		refSpan := 0
 		numBuf := 0
@@ -133,7 +137,7 @@ func runFilterProbes(args []string) {
 
 	for _, id := range order {
 		h := hits[id]
-		if uniqueOnly && len(h.pos) != 1 {
+		if uniqueOnly && totalHits[id] != 1 {
 			continue
 		}
 		fmt.Fprintf(writer, ">%s|%s\n%s\n", id, strings.Join(h.pos, ";"), string(h.seq))
